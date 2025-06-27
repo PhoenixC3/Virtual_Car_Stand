@@ -1,12 +1,4 @@
-# StandFCOOL Car Dealership System
-
-# GENERATE PROTOBUFS (IF NEEDED)
-
-- java -jar openapi-generator-cli.jar generate -g protobuf-schema -i openapi_standfcool.yaml --additional-properties=numberedFieldNumberList=true -o microservices/protobufs
-
-# Chosen Topic
-
-Virtual Car Stand
+# StandFCOOL Virtual Car Dealership System
 
 # Chosen Dataset
 
@@ -178,6 +170,4 @@ The system follows a microservices architecture, with each service handling a sp
 ### Database Layer
 - Some microservices have their own dedicated databases to ensure loose coupling and independent scaling. The types of databases will be determined based on the service's needs (structured for transactions, searchable for listings).
 
-## Application Architecture Diagram
-
-![Application Architecture](ArchDiagram.png)
+## Application Architecture Diagram in misc folder

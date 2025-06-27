@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+spec:
+  selector:
+    app: gateway
+  ports:
+    - name: http
+      protocol: TCP
+      port: 50000
+      targetPort: 50000
+    - name: metrics
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP

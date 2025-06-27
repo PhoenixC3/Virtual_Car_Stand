@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StandFCOOL - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            background-color: #4285F4;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background-color: #3367D6;
+        }
+        .btn-logout {
+            background-color: #f44336;
+        }
+        .btn-logout:hover {
+            background-color: #d32f2f;
+        }
+        pre {
+            background-color: #f9f9f9;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .api-section {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .api-section h3 {
+            margin-top: 0;
+        }
+        .api-result {
+            margin-top: 10px;
+            display: none;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        // Function to make authenticated API requests
+        async function fetchApiEndpoint(endpoint) {
+            try {
+                // Get access token from session if available
+                let headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                const response = await fetch(endpoint, {
+                    method: 'GET',
+                    headers: headers,
+                    credentials: 'same-origin' // This will include cookies in the request
+                });
+                
+                // Create a more predictable ID by removing slashes and the leading slash
+                const resultId = endpoint.replace(/\//g, '-').substring(1);
+                const resultElement = document.getElementById(resultId);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                } else {
+                    resultElement.textContent = `Error ${response.status}: ${response.statusText}`;
+                }
+                
+                resultElement.style.display = 'block';
+            } catch (error) {
+                console.error('API request failed:', error);
+                alert('Failed to fetch data: ' + error.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>StandFCOOL Dashboard</h1>
+        <div class="user-info">
+            <img src="{{ userinfo.picture }}" alt="Avatar" class="user-avatar">
+            <span>{{ userinfo.name }}</span>
+            <a href="/logout" class="btn btn-logout">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Welcome, {{ userinfo.name }}!</h2>
+            <p>You are successfully authenticated with Auth0.</p>
+            <p>Email: {{ userinfo.email }}</p>
+            
+            <div class="api-section">
+                <h3>Cars</h3>
+                <button onclick="window.open('/api/cars', '_blank')" class="btn">View Cars</button>
+                <pre id="api-cars" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Car Listings</h3>
+                <button onclick="window.open('/api/carlistings', '_blank')" class="btn">View Car Listings</button>
+                <pre id="api-carlistings" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Users</h3>
+                <button onclick="window.open('/api/users', '_blank')" class="btn">View Users</button>
+                <pre id="api-users" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Maintenance</h3>
+                <button onclick="window.open('/api/maintenances', '_blank')" class="btn">View Maintenance Records</button>
+                <pre id="api-maintenances" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Inspections</h3>
+                <button onclick="window.open('/api/inspections', '_blank')" class="btn">View Inspections</button>
+                <pre id="api-inspections" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Transactions</h3>
+                <button onclick="window.open('/api/transactions', '_blank')" class="btn">View Transactions</button>
+                <pre id="api-transactions" class="api-result"></pre>
+            </div>
+            
+            <div class="api-section">
+                <h3>Meetings</h3>
+                <button onclick="window.open('/api/meetings', '_blank')" class="btn">View Meetings</button>
+                <pre id="api-meetings" class="api-result"></pre>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Your Profile Information</h2>
+            <pre>{{ userinfo_pretty }}</pre>
+        </div>
+    </div>
+</body>
+</html> 

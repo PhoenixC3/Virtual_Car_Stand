@@ -1,0 +1,98 @@
+version: '3.3'
+
+services:
+  car:
+    build:
+      context: .
+      dockerfile: car/Dockerfile
+    container_name: car-service
+    ports:
+      - "50008:50008"
+    networks:
+      - databases_default
+
+  car_listing:
+    build:
+      context: .
+      dockerfile: car_listing/Dockerfile
+    container_name: car-listing-service
+    ports:
+      - "50009:50009"
+    networks:
+      - databases_default
+
+  inspection:
+    build:
+      context: .
+      dockerfile: inspection/Dockerfile
+    container_name: inspection-service
+    ports:
+      - "50011:50011"
+    networks:
+      - databases_default
+
+  maintenance:
+    build:
+      context: .
+      dockerfile: maintenance/Dockerfile
+    container_name: maintenance-service
+    ports:
+      - "50012:50012"
+    networks:
+      - databases_default
+
+  meeting:
+    build:
+      context: .
+      dockerfile: meeting/Dockerfile
+    container_name: meeting-service
+    ports:
+      - "50015:50015"
+    networks:
+      - databases_default
+
+  transaction:
+    build:
+      context: .
+      dockerfile: transaction/Dockerfile
+    container_name: transaction-service
+    ports:
+      - "50010:50010"
+    networks:
+      - databases_default
+
+  user:
+    build:
+      context: .
+      dockerfile: user/Dockerfile
+    container_name: user-service
+    ports:
+      - "50007:50007"
+    networks:
+      - databases_default
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    container_name: gateway-service
+    ports:
+      - "50000:50000"
+    depends_on:
+      - car
+      - car_listing
+      - inspection
+      - maintenance
+      - meeting
+      - transaction
+      - user
+    networks:
+      - databases_default
+
+volumes:
+  pgdata:
+  csvdata:
+
+networks:
+  databases_default:
+    external: true

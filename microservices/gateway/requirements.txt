@@ -1,0 +1,9 @@
+flask ~= 2.2.3
+grpcio-tools ~= 1.30
+Jinja2 ~= 3.1.2
+pytest ~= 5.4
+authlib ~= 1.2.1
+python-jose ~= 3.3.0
+python-dotenv ~= 1.0.0
+requests ~= 2.31.0
+prometheus_client

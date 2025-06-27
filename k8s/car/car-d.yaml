@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-deployment
+  labels:
+    app: car
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: car
+    spec:
+      containers:
+      - name: car
+        image: fc58182/car:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50008
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50008
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          failureThreshold: 4

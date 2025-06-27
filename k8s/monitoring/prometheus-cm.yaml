@@ -1,0 +1,14 @@
+scrape_configs:
+    - job_name: 'microservices'
+      scrape_interval: 5s
+      static_configs:
+        - targets: [
+          'car-service:8000',
+          'car-listing-service:8000',
+          'gateway-service:8000',
+          'inspection-service:8000',
+          'maintenance-service:8000',
+          'meeting-service:8000',
+          'transaction-service:8000',
+          'user-service:8000'
+        ]

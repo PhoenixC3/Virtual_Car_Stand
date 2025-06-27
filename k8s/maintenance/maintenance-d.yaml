@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: maintenance-deployment
+  labels:
+    app: maintenance
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: maintenance
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: maintenance
+    spec:
+      containers:
+      - name: maintenance
+        image: fc58182/maintenance:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50012
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50012
+          initialDelaySeconds: 10
+          periodSeconds: 5

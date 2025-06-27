@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meeting-deployment
+  labels:
+    app: meeting
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: meeting
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: meeting
+    spec:
+      containers:
+      - name: meeting
+        image: fc58182/meeting:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50015
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50015
+          initialDelaySeconds: 10
+          periodSeconds: 5

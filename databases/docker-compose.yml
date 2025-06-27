@@ -1,0 +1,8 @@
+version: '3.3'
+services:
+  db:
+    build: .
+    container_name: StandDB
+    restart: always
+    ports:
+      - "5432:5432"

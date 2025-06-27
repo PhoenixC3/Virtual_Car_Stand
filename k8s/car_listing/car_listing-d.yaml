@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: car-listing-deployment
+  labels:
+    app: car-listing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: car-listing
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: car-listing
+    spec:
+      containers:
+      - name: car-listing
+        image: fc58182/car_listing:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50009
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50009
+          initialDelaySeconds: 10
+          periodSeconds: 15
+          failureThreshold: 4

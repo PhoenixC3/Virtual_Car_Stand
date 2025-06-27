@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-deployment
+  labels:
+    app: transaction
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: transaction
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec:
+      containers:
+      - name: transaction
+        image: fc58182/transaction:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50010
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50010
+          initialDelaySeconds: 10
+          periodSeconds: 5

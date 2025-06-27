@@ -1,0 +1,10 @@
+FROM postgres:15
+
+COPY init.sql /docker-entrypoint-initdb.d/
+
+# Copy CSV files into the image
+RUN apt-get update && apt-get install -y curl && \
+    curl -o /docker-entrypoint-initdb.d/cars.csv https://storage.googleapis.com/standfcool/cars.csv && \
+    curl -o /docker-entrypoint-initdb.d/listings.csv https://storage.googleapis.com/standfcool/listings.csv
+
+EXPOSE 5432

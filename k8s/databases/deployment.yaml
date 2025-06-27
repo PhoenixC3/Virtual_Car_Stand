@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db-service
+  template:
+    metadata:
+      labels:
+        app: db-service
+    spec:
+      containers:
+      - name: postgres
+        image: fc58182/database:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc

@@ -1,0 +1,1136 @@
+openapi: 3.0.0
+info:
+  title: "CarStandFCOOL API"
+  description: |
+    An API for managing a cloud-based car dealership service.
+    
+    IMPORTANT: All endpoints in this API must be prefixed with '/api'.
+    For example:
+    - '/cars' should be accessed as '/api/cars'
+    - '/users' should be accessed as '/api/users'
+    - '/meetings' should be accessed as '/api/meetings'
+    And so on for all endpoints.
+  version: "1.0.0"
+
+servers:
+  - url: "/api"
+    description: "Base URL for all endpoints. All paths in this document must be prefixed with this URL."
+  
+components:
+  schemas:
+    Car:
+      type: "object"
+      required:
+        - carId
+        - year
+        - manufacturer
+        - model
+        - condition
+        - cylinders
+        - fuel
+        - odometer
+        - transmission
+        - VIN
+        - drive
+        - size
+        - type
+        - paint_color
+      properties:
+        carId:
+          type: "integer"
+          example: 123
+        year:
+          type: "integer"
+          example: 2020
+        manufacturer:
+          type: "string"
+          example: "ford"
+        model:
+          type: "string"
+          example: "f-150"
+        condition:
+          type: "string"
+          example: "excellent"
+        cylinders:
+          type: "string"
+          example: "6 cylinders"
+        fuel:
+          type: "string"
+          example: "gas"
+        odometer:
+          type: "integer"
+          example: 50000
+        transmission:
+          type: "string"
+          example: "automatic"
+        VIN:
+          type: "string"
+          example: "1FMJU1JT1HEA52352"
+        drive:
+          type: "string"
+          example: "4WD"
+        size:
+          type: "string"
+          example: "compact"
+        type:
+          type: "string"
+          example: "sedan"
+        paint_color:
+          type: "string"
+          example: "white"
+ 
+    User:
+      type: object
+      required:
+        - userId
+        - email
+        - firstName
+      properties:
+        userId:
+          type: integer
+          example: 123
+        firstName:
+          type: string
+          example: "John"
+        lastName:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+          
+    Maintenance:
+      type: "object"
+      required:
+        - maintenanceId
+        - maintenanceCarId
+        - maintenanceType
+        - maintenanceStatus
+        - maintenanceStartDate
+      properties:
+        maintenanceId:
+          type: "integer"
+        maintenanceCarId:
+          type: "integer"
+        maintenanceType:
+          type: "string"
+          description: maintenance type
+          enum:
+            - Unknown
+            - Basic
+            - Full
+        maintenanceStatus:
+          type: "string"
+          description: maintenance status
+          enum:
+            - Unknown
+            - Ongoing
+            - Finished
+        maintenanceClientNotes:
+          type: "string"
+        maintenanceStaffNotes:
+          type: "string"
+        maintenanceCost:
+          type: "number"
+          format: "double"
+        maintenanceStartDate:
+          type: "string"
+          format: "date-time"
+        maintenanceEndDate:
+          type: "string"
+          format: "date-time"
+          
+    Inspection:
+      type: "object"
+      required:
+        - inspectionId
+        - inspectionCarId
+        - inspectionStatus
+        - inspectionStartDate
+      properties:
+        inspectionId:
+          type: "integer"
+        inspectionCarId:
+          type: "integer"
+        inspectionStatus:
+          type: "string"
+          description: inspection status
+          enum:
+            - Unknown
+            - Ongoing
+            - Finished
+        inspectionClientNotes:
+          type: "string"
+        inspectionStaffNotes:
+          type: "string"
+        inspectionCost:
+          type: "number"
+          format: "double"
+        inspectionStartDate:
+          type: "string"
+          format: "date-time"
+        inspectionEndDate:
+          type: "string"
+          format: "date-time"
+            
+    Transaction:
+      type: object
+      required:
+        - transactionId
+        - buyerId
+        - carId
+        - type
+        - totalAmount
+        - status
+        - transactionDate
+      properties:
+        transactionId:
+          type: integer
+          description: "Unique transaction ID"
+          example: 1001
+        buyerId:
+          type: integer
+          description: "ID of the user who made the transaction"
+          example: 123
+        carId:
+          type: integer
+          description: "ID of the car involved in the transaction"
+          example: 456
+        type:
+          type: string
+          enum:
+            - Unknown
+            - rent
+            - buy
+          description: "Type of transaction (Rent or Buy)"
+          example: "Buy"
+        totalAmount:
+          type: number
+          format: double
+          description: "Total amount of the transaction"
+          example: 25000.00
+        status:
+          type: string
+          enum:
+            - Unknown
+            - pending
+            - completed
+            - canceled
+          description: "Current status of the transaction"
+          example: "Completed"
+        transactionDate:
+          type: string
+          format: date-time
+          description: "Date and time when the transaction occurred"
+          example: "2024-03-08T12:30:00Z"
+        endDate:
+          type: string
+          format: date-time
+          description: "End date (if rented), null if bought"
+          example: "2024-09-08T12:30:00Z"
+          
+    CarListing:
+      type: object
+      required:
+        - listingId
+        - carId
+        - userId
+        - type
+        - description
+        - posting_date
+        - sale_price
+        - promoted
+        - status
+      properties:
+        listingId:
+          type: integer
+          format: int64
+          example: 10
+        carId:
+          type: integer
+          format: int64
+          example: 10
+        userId:
+          type: integer
+          format: int64
+          example: 10
+        type:
+          type: string
+          description: listing type in the website
+          enum:
+            - Unknown
+            - rent
+            - buy
+        description:
+          type: string
+          format: date-time
+          description: description of the listing
+        posting_date:
+          type: string
+          format: date-time
+          description: date when the car listing was posted
+        sale_price:
+          type: number
+          format: double
+          description: price of the car
+        promoted:
+          type: boolean
+          description: Promotion status of the listing
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+            - Unknown
+            - available
+            - reserved
+            - sold
+            
+    Meeting:
+        type: object
+        required:
+          - meetingId
+          - clientId
+          - scheduleDate
+          - status
+        properties:
+          meetingId:
+            type: integer
+            description: "ID of the meeting"
+            example: 2001
+          clientId:
+            type: integer
+            description: "ID of the client attending the meeting"
+            example: 123
+          scheduleDate:
+            type: string
+            format: date-time
+            description: "Scheduled date and time for the meeting"
+            example: "2024-04-15T14:00:00Z"
+          status:
+            type: string
+            enum:
+              - Unknown
+              - scheduled
+              - completed
+              - canceled
+            description: "Current status of the meeting"
+            example: "Scheduled"
+          
+  parameters:
+    carId:
+      name: "carId"
+      description: "ID of the car"
+      in: path
+      required: true
+      schema:
+        type: "integer"
+      example: 123
+      
+    userId:
+      name: userId
+      description: "ID of the user."
+      in: path
+      required: true
+      schema:
+        type: "integer"
+      example: 123
+      
+    maintenanceId:
+        name: "maintenanceId"
+        description: "ID of the maintenance"
+        in: path
+        required: True
+        schema:
+          type: "integer"
+        example: 123
+          
+    inspectionId:
+        name: "inspectionId"
+        description: "ID of the inspection"
+        in: path
+        required: True
+        schema:
+          type: "integer"
+        example: 123
+          
+    transactionId:
+      name: transactionId
+      description: "ID of the transaction."
+      in: path
+      required: true
+      schema:
+        type: "integer"
+      example: 123
+      
+    listingId:
+      name: listingId
+      description: "ID of the listing."
+      in: path
+      required: true
+      schema:
+        type: "integer"
+      example: 123
+      
+    meetingId:
+      name: meetingId
+      description: "ID of the meeting."
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 123
+
+paths:
+  /cars:
+    get:
+      operationId: "cars.read_all"
+      tags:
+        - Car
+      summary: "Read the list of cars"
+      responses:
+        "200":
+          description: "Successfully read cars list"
+          content:
+            application/json:
+              schema:
+                x-body-name: "cars"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Car"
+        "500":
+          description: "Server error"
+    post:
+      operationId: "cars.create"
+      tags:
+        - Car
+      summary: "Create a car"
+      requestBody:
+          description: "Car to add"
+          required: True
+          content:
+            application/json:
+              schema:
+                x-body-name: "car"
+                $ref: "#/components/schemas/Car"
+      responses:
+        "201":
+          description: "Successfully added car"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Server error"
+          
+  /cars/{carId}:
+    get:
+      operationId: "cars.read_one"
+      tags:
+        - Car
+      summary: "Read one car"
+      parameters:
+        - $ref: "#/components/parameters/carId"
+      responses:
+        "200":
+          description: "Successfully read car"
+          content:
+            application/json:
+              schema:
+                x-body-name: "car"
+                $ref: "#/components/schemas/Car"
+        "404":
+          description: "Car not found"
+    put:
+      operationId: "cars.update"
+      tags:
+        - Car
+      summary: "Update a car"
+      parameters:
+        - $ref: "#/components/parameters/carId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "car"
+              $ref: "#/components/schemas/Car"
+      responses:
+        "200":
+          description: "Successfully updated car"
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Car"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Car not found"
+    delete:
+      operationId: "cars.delete"
+      tags:
+        - Car
+      summary: "Delete a car"
+      parameters:
+        - $ref: "#/components/parameters/carId"
+      responses:
+        "204":
+          description: "Successfully deleted car"
+        "404":
+          description: "Car not found"
+          
+  /users:
+    get:
+      operationId: users.read_all
+      tags:
+        - User
+      summary: Read the list of users
+      responses:
+        "200":
+          description: "Successfully read user list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "500":
+          description: "Server error"
+    post:
+      operationId: users.create
+      tags:
+        - User
+      summary: Create a user
+      requestBody:
+        description: "User to create"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: "Successfully created user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: "Invalid input"
+        "500":
+          description: "Server error"
+
+  /users/{userId}:
+    get:
+      operationId: users.read_one
+      tags:
+        - User
+      summary: Read one user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: "Successfully read user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: "User not found"
+    put:
+      operationId: users.update
+      tags:
+        - User
+      summary: Update a user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: "Successfully updated user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "User not found"
+    delete:
+      operationId: users.delete
+      tags:
+        - User
+      summary: Delete a user
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "204":
+          description: "Successfully deleted user"
+        "404":
+          description: "User not found"
+          
+  /maintenances:
+    get:
+      operationId: "maintenance.read_all"
+      tags:
+        - Maintenance
+      summary: "Read the list of your maintenances"
+      responses:
+        "200":
+          description: "Successfully read maintenance list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Maintenance"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "500":
+          description: "Internal Server Error"
+    post:
+      operationId: "maintenance.create"
+      tags:
+        - Maintenance
+      summary: "Create a maintenance"
+      requestBody:
+          description: "Maintenance to create"
+          required: true
+          content:
+            application/json:
+              schema:
+                x-body-name: "maintenance"
+                $ref: "#/components/schemas/Maintenance"
+      responses:
+        "201":
+          description: "Successfully created maintenance"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Maintenance"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized"
+        "409":
+          description: "Conflict - Maintenance already exists"
+        "500":
+          description: "Internal Server Error"
+          
+  /maintenances/{maintenanceId}:
+    get:
+      operationId: "maintenance.read_one"
+      tags:
+        - Maintenance
+      summary: "Read one maintenance"
+      parameters:
+        - $ref: "#/components/parameters/maintenanceId"
+      responses:
+        "200":
+          description: "Successfully read maintenance"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Maintenance"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Maintenance not found"
+        "500":
+          description: "Internal Server Error"
+    put:
+      tags:
+        - Maintenance
+      operationId: "maintenance.update"
+      summary: "Update a maintenance"
+      parameters:
+        - $ref: "#/components/parameters/maintenanceId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "maintenance"
+              $ref: "#/components/schemas/Maintenance"
+      responses:
+        "200":
+          description: "Successfully updated maintenance"
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Maintenance"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Maintenance not found"
+        "500":
+          description: "Internal Server Error"
+    delete:
+      tags:
+        - Maintenance
+      operationId: "maintenance.delete"
+      summary: "Delete a maintenance"
+      parameters:
+        - $ref: "#/components/parameters/maintenanceId"
+      responses:
+        "204":
+          description: "Successfully deleted maintenance"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Maintenance not found"
+        "500":
+          description: "Internal Server Error"
+
+  /inspections:
+    get:
+      operationId: "inspection.read_all"
+      tags:
+        - Inspection
+      summary: "Read the list of your inspections"
+      responses:
+        "200":
+          description: "Successfully read inspection list"
+          content: 
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Inspection"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "500":
+          description: "Internal Server Error"
+    post:
+      operationId: "inspection.create"
+      tags:
+        - Inspection
+      summary: "Create an inspection"
+      requestBody:
+          description: "Inspection to create"
+          required: true
+          content:
+            application/json:
+              schema:
+                x-body-name: "inspection"
+                $ref: "#/components/schemas/Inspection"
+      responses:
+        "201":
+          description: "Successfully created inspection"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inspection"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized"
+        "409":
+          description: "Conflict - Inspection already exists"
+        "500":
+          description: "Internal Server Error"
+          
+  /inspections/{inspectionId}:
+    get:
+      operationId: "inspection.read_one"
+      tags:
+        - Inspection
+      summary: "Read one inspection"
+      parameters:
+        - $ref: "#/components/parameters/inspectionId"
+      responses:
+        "200":
+          description: "Successfully read inspection"
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inspection"
+        "400":
+          description: "Bad request"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Inspection not found"
+        "500":
+          description: "Internal Server Error"
+    put:
+      tags:
+        - Inspection
+      operationId: "inspection.update"
+      summary: "Update an inspection"
+      parameters:
+        - $ref: "#/components/parameters/inspectionId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              x-body-name: "inspection"
+              $ref: "#/components/schemas/Inspection"
+      responses:
+        "200":
+          description: "Successfully updated inspection"
+          content: 
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Inspection"
+        "400":
+          description: "Invalid input data"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Inspection not found"
+        "500":
+          description: "Internal Server Error"
+    delete:
+      tags:
+        - Inspection
+      operationId: "inspection.delete"
+      summary: "Delete an inspection"
+      parameters:
+        - $ref: "#/components/parameters/inspectionId"
+      responses:
+        "204":
+          description: "Successfully deleted inspection"
+        "401":
+          description: "Unauthorized"
+        "403":
+          description: "Forbidden"
+        "404":
+          description: "Inspection not found"
+        "500":
+          description: "Internal Server Error"
+          
+  /transactions:
+    get:
+      operationId: transactions.read_all
+      tags:
+        - Transaction
+      summary: Read the list of transactions
+      responses:
+        "200":
+          description: Successfully read transactions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+        "500":
+          description: Server error
+    post:
+      operationId: transactions.create
+      tags:
+        - Transaction
+      summary: Create a transaction
+      requestBody:
+        description: Transaction to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transaction"
+      responses:
+        "201":
+          description: Successfully created transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
+        "409":
+          description: Conflict - transaction already exists
+  
+  /transactions/{transactionId}:
+    get:
+      operationId: transactions.read_one
+      tags:
+        - Transaction
+      summary: Read one transaction
+      parameters:
+        - $ref: "#/components/parameters/transactionId"
+      responses:
+        "200":
+          description: Successfully read transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "404":
+          description: Transaction not found
+    put:
+      operationId: transactions.update
+      tags:
+        - Transaction
+      summary: Update a transaction
+      parameters:
+        - $ref: "#/components/parameters/transactionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Transaction"
+      responses:
+        "200":
+          description: Successfully updated transaction
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Transaction"
+        "400":
+          description: Invalid input
+        "404":
+          description: Transaction not found
+        "409":
+          description: Conflict - transaction update issue
+    delete:
+      operationId: transactions.delete
+      tags:
+        - Transaction
+      summary: Delete a transaction
+      parameters:
+        - $ref: "#/components/parameters/transactionId"
+      responses:
+        "204":
+          description: Successfully deleted transaction
+        "404":
+          description: Transaction not found
+        "500":
+          description: Server error
+          
+  /carlistings:
+    get:
+      operationId: "carlisting.read_all"
+      tags:
+        - Car Listing
+      summary: "Read the list of car listings"
+      responses:
+        '200':
+          description: "Successfully read car listing list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CarListing"
+        '500':
+          description: "Server error"
+    post:
+      operationId: "carlisting.create"
+      tags:
+        - Car Listing
+      summary: "Create a car listing"
+      requestBody:
+          description: "Car listing to create"
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarListing"
+      responses:
+        '201':
+          description: "Successfully created car listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarListing"
+        '400':
+          description: "Invalid input"
+        '500':
+          description: "Server error"
+
+  /carlistings/{listingId}:
+    get:
+      operationId: "carlisting.read_one"
+      tags:
+        - Car Listing
+      summary: "Read one car listing"
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: ID of the car listing to retrieve
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "Successfully read car listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarListing"
+        '404':
+          description: "Car listing not found"
+
+    put:
+      operationId: "carlisting.update"
+      tags:
+        - Car Listing
+      summary: "Update a car listing"
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: ID of the car listing to update
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarListing"
+      responses:
+        '200':
+          description: "Successfully updated car listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarListing"
+        '400':
+          description: "Invalid input"
+        '404':
+          description: "Car listing not found"
+
+    delete:
+      operationId: "carlisting.delete"
+      tags:
+        - Car Listing
+      summary: "Delete a car listing"
+      parameters:
+        - name: listingId
+          in: path
+          required: true
+          description: ID of the car listing to delete
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "Successfully deleted car listing"
+  
+  /meetings:
+    get:
+      operationId: meetings.read_all
+      tags:
+        - Meeting
+      summary: Read the list of meetings
+      responses:
+        "200":
+          description: Successfully read meeting list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Meeting"
+        "500":
+          description: Server error
+    post:
+      operationId: meetings.create
+      tags:
+        - Meeting
+      summary: Create a meeting
+      requestBody:
+        description: Meeting to create
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Meeting"
+      responses:
+        "201":
+          description: Successfully created meeting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+        "400":
+          description: Invalid input
+        "500":
+          description: Server error
+          
+  /meetings/{meetingId}:
+    get:
+      operationId: meetings.read_one
+      tags:
+        - Meeting
+      summary: Read one meeting
+      parameters:
+        - $ref: "#/components/parameters/meetingId"
+      responses:
+        "200":
+          description: "Successfully read meeting"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+        "404":
+          description: "Meeting not found"
+    put:
+      operationId: meetings.update
+      tags:
+        - Meeting
+      summary: Update a meeting
+      parameters:
+        - $ref: "#/components/parameters/meetingId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Meeting"
+      responses:
+        "200":
+          description: "Successfully updated meeting"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Meeting"
+        "400":
+          description: "Invalid input"
+        "404":
+          description: "Meeting not found"
+    delete:
+      operationId: meetings.delete
+      tags:
+        - Meeting
+      summary: Delete a meeting
+      parameters:
+        - $ref: "#/components/parameters/meetingId"
+      responses:
+        "204":
+          description: "Successfully deleted meeting"
+        "404":
+          description: "Meeting not found"

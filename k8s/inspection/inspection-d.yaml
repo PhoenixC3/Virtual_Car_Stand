@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: inspection-deployment
+  labels:
+    app: inspection
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: inspection
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: inspection
+    spec:
+      containers:
+      - name: inspection
+        image: fc58182/inspection:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 50011
+          name: grpc
+        - containerPort: 8000
+          name: metrics
+        envFrom:
+        - secretRef:
+            name: all-credentials
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+        livenessProbe:
+          tcpSocket:
+            port: 50011
+          initialDelaySeconds: 10
+          periodSeconds: 5
+

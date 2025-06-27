@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: car-listing-service
+  labels:
+    app: car-listing
+spec:
+  selector:
+    app: car-listing
+  ports:
+    - name: grpc
+      port: 50009
+      targetPort: 50009
+    - name: metrics
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
